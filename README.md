@@ -2,7 +2,7 @@
 
 This repository contains the scripts for automatically creating via pipeline the Docker images for building and running the Belle II software.
 
-The pipeline creates one image for each of the supported OS (see `systems.csv` for the list of supported OS). The pipeline is automatically triggered via Git tag each time the file [b2install-prepare](https://github.com/belle2/tools/blob/main/b2install-prepare) is updated in the `main` branch of the `tools` repository.
+The pipeline creates one image for each of the supported OS (see `systems.csv` for the list of supported OS). The pipeline is automatically triggered by the buildbot via Git tag each time the file [b2install-prepare](https://github.com/belle2/tools/blob/main/b2install-prepare) is updated in the `main` branch of the `tools` repository.
 
 The images are created using [kaniko](https://docs.gitlab.com/ee/ci/docker/using_kaniko.html). It is also possible to create the images locally with Docker by using the script `create_images.sh`.
 
