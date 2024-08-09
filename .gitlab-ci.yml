@@ -1,6 +1,7 @@
 stages:
-  - create-dockerfile
-  - build-image
+  - create-dockerfiles
+  - build-images
+  - test-images
 
 workflow:
   rules:
@@ -21,8 +22,8 @@ default:
   - 'ubuntu2204'
   - 'ubuntu2404'
 
-create-dockerfile:
-  stage: create-dockerfile
+create-dockerfiles:
+  stage: create-dockerfiles
   image: alpine:latest
   parallel:
     matrix:
@@ -36,8 +37,8 @@ create-dockerfile:
       - DockerDir_${SUPPORTED_OS}
     expire_in: 1 days
 
-build-image:
-  stage: build-image
+build-images:
+  stage: build-images
   image:
     # See the GitLab documentation: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
     name: gcr.io/kaniko-project/executor:v1.14.0-debug
@@ -57,4 +58,13 @@ build-image:
       --destination "${DOCKERHUB_ORGANIZATION}/belle2-base-${SUPPORTED_OS}:${CI_COMMIT_TAG}"
       --destination "${DOCKERHUB_ORGANIZATION}/belle2-base-${SUPPORTED_OS}"
   dependencies:
-    - create-dockerfile
+    - create-dockerfiles
+
+test-images:
+  stage: test-images
+  image: $CI_REGISTRY_IMAGE/belle2-base-$SUPPORTED_OS:$CI_COMMIT_TAG
+  parallel:
+    matrix:
+      - SUPPORTED_OS: *supported_os_list
+  script:
+    ./tests/test.sh
