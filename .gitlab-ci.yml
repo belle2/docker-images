@@ -67,4 +67,4 @@ test-images:
     matrix:
       - SUPPORTED_OS: *supported_os_list
   script:
-    ./tests/test.sh
+    - ./tests/test.sh
