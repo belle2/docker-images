@@ -6,7 +6,7 @@ The pipeline creates one image for each of the supported OS (see `systems.csv` f
 
 The images are created using [kaniko](https://docs.gitlab.com/ee/ci/docker/using_kaniko.html). It is also possible to create the images locally with Docker by using the script `create_images.sh`.
 
-The images are pushed to both the [GitLab container registry](https://gitlab.desy.de/belle2/software/docker-images/container_registry) and [Docker Hub](https://hub.docker.com/orgs/belle2/repositories).
+The images are pushed to both the [GitLab container registry](https://gitlab.desy.de/belle2/software/docker-images/container_registry) and [Docker Hub](https://hub.docker.com/u/belle2).
 
 ### Naming convention
 
