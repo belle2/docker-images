@@ -12,10 +12,10 @@ The images are pushed to both the [GitLab container registry](https://gitlab.des
 
 The images are named using the following convention:
 
-    belle2-base-<os>:<YYYY-MM-DD>
+    belle2-base-<OS>:<YYYY-MM-DD>
     
-where `<os>` is the short name of the supported OS and `<YYYY-MM-DD>` is the date on which the image has been created.
+where `<OS>` is the short name of the supported OS (as in the first column of `systems.csv`) and `<YYYY-MM-DD>` is the date on which the image has been created.
 
 Note that the `latest` tag is also provided, which automatically points to the most recent image available for the given OS.
 
-For pulling and/or using the images, please refer to the documentation of the container registry of Docker Hub.
+For pulling and/or using the images, please refer to the documentation of the GitLab container registry or Docker Hub.
