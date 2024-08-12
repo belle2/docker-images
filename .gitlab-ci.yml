@@ -2,6 +2,7 @@ stages:
   - create-dockerfiles
   - build-images
   - test-images
+  - download-and-inspect-images
 
 workflow:
   rules:
@@ -62,9 +63,26 @@ build-images:
 
 test-images:
   stage: test-images
+  # Here we take the images from the GitLab container registry for running the test
+  # We will check the integrity of the Docker Hub images in the following stage
   image: $CI_REGISTRY_IMAGE/belle2-base-$SUPPORTED_OS:$CI_COMMIT_TAG
   parallel:
     matrix:
       - SUPPORTED_OS: *supported_os_list
   script:
     - ./tests/test.sh
+
+download-and-inspect-images:
+  stage: download-and-inspect-images
+  image: alpine:latest
+  parallel:
+    matrix:
+      - SUPPORTED_OS: *supported_os_list
+  script:
+    # Check if we can download the images from Docker Hub with both apptainer and skopeo
+    - apk add apptainer skopeo
+    - apptainer build belle2-base-${SUPPORTED_OS}-${CI_COMMIT_TAG}.sif docker://${DOCKERHUB_ORGANIZATION}/belle2-base-${SUPPORTED_OS}:${CI_COMMIT_TAG}
+    - skopeo copy docker://${DOCKERHUB_ORGANIZATION}/belle2-base-${SUPPORTED_OS}:${CI_COMMIT_TAG} docker-archive:belle2-base-${SUPPORTED_OS}-${CI_COMMIT_TAG}.tar
+    # And inspect the images: we want to see if skopeo crashes or not
+    - skopeo inspect docker://${DOCKERHUB_ORGANIZATION}/belle2-base-${SUPPORTED_OS}:${CI_COMMIT_TAG}
+    - skopeo inspect docker-archive:belle2-base-${SUPPORTED_OS}-${CI_COMMIT_TAG}.tar
