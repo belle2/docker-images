@@ -40,8 +40,8 @@ create-dockerfiles:
 build-images:
   stage: build-images
   image:
-    # See the GitLab documentation: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
-    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    # We need the debug image, see the GitLab documentation: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   parallel:
     matrix:
