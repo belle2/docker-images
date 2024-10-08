@@ -52,7 +52,7 @@ EOF
   # Finish creating the Dockerfile
   cat >> ${DOCKERDIR}/Dockerfile << EOF
 ADD b2install-prepare /b2install-prepare
-RUN ${PREPARE} /b2install-prepare --non-interactive --optionals ${CLEANUP} && rm /b2install-prepare
+RUN ${PREPARE} /b2install-prepare --non-interactive all ${CLEANUP} && rm /b2install-prepare
 EOF
 
 done < systems.csv
