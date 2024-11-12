@@ -24,9 +24,12 @@ Note that the `latest` tag is also provided, which automatically points to the m
 
 The images can be downloaded and stored locally using Docker itself, [skopeo](https://github.com/containers/skopeo) or [Apptainer](https://apptainer.org/) (only if a SIF file is necessary). For downloading the images from Docker Hub:
 
-- with `docker` as a `tar` archive: `docker save -o belle2-base-<OS>-latest.tar belle2/belle2-base-<OS>:latest`
-- with `skopeo` as a `tar` archive: `skopeo copy docker://belle2/belle2-base-<OS>:latest docker-archive:belle2-base-<OS>-latest.tar`
-- with `apptainer` as a SIF file: `apptainer build belle2-base-<OS>-latest.sif docker://belle2/belle2-base-<OS>:latest`
+- for Docker:
+    - with `docker` as a `tar` archive: `docker save -o belle2-base-<OS>-latest.tar belle2/belle2-base-<OS>:latest`
+    - with `skopeo` as a `tar` archive: `skopeo copy docker://belle2/belle2-base-<OS>:latest docker-archive:belle2-base-<OS>-latest.tar`
+- for Apptainer:
+    - with `apptainer` as a SIF file: `apptainer build belle2-base-<OS>-latest.sif docker://belle2/belle2-base-<OS>:latest`
+    - with `apptainer` as a sandbox: `apptainer build --fix-perms --sandbox belle2-base-<OS>-latest.sif docker://belle2/belle2-base-<OS>:latest`
 
 See also the `download-and-inspect-images` stage of the pipeline.
 
