@@ -1,9 +1,6 @@
 el7,centos:7,CentOS 7,yum update -y &&,&& yum clean all
 el8,almalinux:8,Alma Linux 8,yum update -y &&,&& yum clean all
 el9,almalinux:9,Alma Linux 9,yum update -y &&,&& yum clean all
-ubuntu2004,ubuntu:20.04,Ubuntu 20.04,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
 ubuntu2204,ubuntu:22.04,Ubuntu 22.04,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
 ubuntu2404,ubuntu:24.04,Ubuntu 24.04,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
-debian10,debian:10,Debian 10,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
-debian11,debian:11,Debian 11,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
 debian12,debian:12,Debian 12,apt-get update &&,&& rm -fr /var/lib/apt/lists/*
