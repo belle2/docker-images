@@ -1,4 +1,5 @@
 stages:
+  - check-supported-os
   - create-dockerfiles
   - build-images
   - test-images
@@ -7,24 +8,54 @@ stages:
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 default:
   # Always allow the pipeline to finish despite new ones have been triggered
   interruptible: false
 
 .supported_os_list: &supported_os_list
-  - 'debian10'
-  - 'debian11'
   - 'debian12'
   - 'el7'
   - 'el8'
   - 'el9'
-  - 'ubuntu2004'
   - 'ubuntu2204'
   - 'ubuntu2404'
 
+# By default, jobs run only when a tag is pushed
+.tag_only:
+  rules:
+    - if: $CI_COMMIT_TAG
+
+check-supported-os:
+  stage: check-supported-os
+  image: alpine:latest
+  # Run also on merge requests, to catch problems with systems.csv before tagging
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  parallel:
+    matrix:
+      - SUPPORTED_OS: *supported_os_list
+  script:
+    # create_docker_files.sh reads systems.csv line by line: without a final
+    # newline, the last system is skipped
+    - |
+      if [ -n "$(tail -c 1 systems.csv)" ]; then
+        echo "ERROR: systems.csv does not end with a newline"
+        exit 1
+      fi
+    # Ensure there are no mismatches between supported_os_list and systems.csv
+    - |
+      if ! grep -q "^${SUPPORTED_OS}," systems.csv; then
+        echo "ERROR: ${SUPPORTED_OS} is not defined in systems.csv"
+        exit 1
+      fi
+    - echo "${SUPPORTED_OS} is defined in systems.csv"
+
 create-dockerfiles:
   stage: create-dockerfiles
+  extends: .tag_only
   image: alpine:latest
   parallel:
     matrix:
@@ -40,6 +71,7 @@ create-dockerfiles:
 
 build-images:
   stage: build-images
+  extends: .tag_only
   image:
     # We need the debug image, see the GitLab documentation: https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
     name: gcr.io/kaniko-project/executor:debug
@@ -63,6 +95,7 @@ build-images:
 
 test-images:
   stage: test-images
+  extends: .tag_only
   # Here we take the images from the GitLab container registry for running the test
   # We will check the integrity of the Docker Hub images in the following stage
   image: $CI_REGISTRY_IMAGE/belle2-base-$SUPPORTED_OS:$CI_COMMIT_TAG
@@ -74,6 +107,7 @@ test-images:
 
 download-and-inspect-images:
   stage: download-and-inspect-images
+  extends: .tag_only
   image: alpine:latest
   parallel:
     matrix:
