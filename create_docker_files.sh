@@ -55,4 +55,19 @@ ADD b2install-prepare /b2install-prepare
 RUN ${PREPARE} /b2install-prepare --non-interactive all ${CLEANUP} && rm /b2install-prepare
 EOF
 
+  # EL8 only ships OCaml 4.07, while whizard requires at least 4.11. Install a
+  # recent release from the OCaml distribution into /usr/local, which comes
+  # before /usr/bin in PATH and therefore shadows the system package.
+  if [[ "${SYSTEM}" == "el8" ]]; then
+    OCAML_VERSION=4.14.2
+    cat >> ${DOCKERDIR}/Dockerfile << EOF
+RUN mkdir /ocaml-build && cd /ocaml-build \\
+    && wget -q https://github.com/ocaml/ocaml/archive/refs/tags/${OCAML_VERSION}.tar.gz \\
+    && tar xzf ${OCAML_VERSION}.tar.gz && cd ocaml-${OCAML_VERSION} \\
+    && ./configure --prefix=/usr/local \\
+    && make -j\$(nproc) && make install \\
+    && cd / && rm -rf /ocaml-build
+EOF
+  fi
+
 done < systems.csv
