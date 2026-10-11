@@ -64,9 +64,9 @@ EOF
 RUN mkdir /ocaml-build && cd /ocaml-build \\
     && wget -q https://github.com/ocaml/ocaml/archive/refs/tags/${OCAML_VERSION}.tar.gz \\
     && tar xzf ${OCAML_VERSION}.tar.gz && cd ocaml-${OCAML_VERSION} \\
-    && ./configure --prefix=/usr/local \\
+    && ./configure --prefix=/usr/local --disable-ocamldoc --disable-debugger \\
     && make -j\$(nproc) && make install \\
-    && cd / && rm -rf /ocaml-build
+    && cd / && rm -rf /ocaml-build /usr/local/lib/ocaml/compiler-libs
 EOF
   fi
 
